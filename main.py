@@ -11,7 +11,7 @@ productos = [
 
 # MÓDULO 1: AUTENTICACIÓN DE OPERADORES
 def autenticar_operador():
-    """Valida el acceso del operador mediante PIN de 4 dígitos (Máx 3 intentos)."""
+    """Valida el inicio de sesión"""
     pin_correcto = "2026"
     intentos_maximos = 3
 
