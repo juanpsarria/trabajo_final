@@ -1,0 +1,23 @@
+{
+    "total_ingresos": 8000.0,
+    "total_clientes": 1,
+    "clientes_con_descuento": 0,
+    "historial_pedidos": [
+        {
+            "codigo": "P-001",
+            "productos": [
+                {
+                    "nombre": "CAFÉ",
+                    "precio_unitario": 8000.0,
+                    "cantidad": 1,
+                    "monto": 8000.0
+                }
+            ],
+            "subtotal": 8000.0,
+            "descuento": 0.0,
+            "recibio_descuento": false,
+            "total": 8000.0,
+            "medio_pago": "Efectivo"
+        }
+    ]
+}
