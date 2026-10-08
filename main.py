@@ -15,15 +15,17 @@ def autenticar_operador():
     pin_correcto = "2026"
     intentos_maximos = 3
 
+    nombre = input("\nIngrese nombre de usuario: ").strip()
+
     for intento in range(1, intentos_maximos + 1):
-        pin_ingresado = input(f"Ingrese PIN de seguridad (Intento {intento} de {intentos_maximos}): ").strip()
+        pin_ingresado = input(f"\nIngrese PIN de seguridad (Intento {intento} de {intentos_maximos}): ").strip()
         if pin_ingresado == pin_correcto:
-            print("\n[OK] Ingreso correcto \n")
+            print(f"\n[INGRESO OK] Bienvenido, {nombre}. \n")
             return True
         else:
             intentos_restantes = intentos_maximos - intento
             if intentos_restantes > 0:
-                print(f"[ERROR] PIN incorrecto. Intentos restantes: {intentos_restantes}\n")
+                print(f"\n[ERROR] PIN incorrecto. Intentos restantes: {intentos_restantes}\n")
 
     print("\n[BLOQUEADO] No hay más intentos.")
     return False
@@ -37,11 +39,11 @@ def leer_numero_valido(mensaje, tipo=int, minimo=1):
             entrada = input(mensaje).strip()
             valor = tipo(entrada)
             if valor < minimo:
-                print(f"[ERROR] El valor debe ser mayor o igual a {minimo}.")
+                print(f"\n[ERROR] El valor debe ser mayor o igual a {minimo}.")
                 continue
             return valor
         except ValueError:
-            print("[ERROR] Ingrese una opción correcta.")
+            print("\n[ERROR] Ingrese una opción correcta.")
 
 def generar_codigo_pedido(contador):
     """Genera un código correlativo para el pedido (ej. P-001)."""
@@ -53,7 +55,7 @@ def registrar_pedido(pedidos_dia, contador_pedidos):
     print(f"\n Número de pedido: {codigo}")
 
     cant_tipos = leer_numero_valido(
-        "Ingrese la cantidad de tipos de productos distintos a llevar: ",
+        "\n Ingrese la cantidad de tipos de productos distintos a llevar: ",
         tipo=int,
         minimo=1
     )
@@ -63,24 +65,24 @@ def registrar_pedido(pedidos_dia, contador_pedidos):
 
     for i in range(1, cant_tipos + 1):
         print(f"\n Producto {i} de {cant_tipos}")
-        print("Seleccione los productos:")
+        print("\n Seleccione los productos:")
         for idx, prod in enumerate(productos, start=1):
             print(f"{idx}. {prod['nombre']} (${prod['precio']:.2f})")
 
         # Selección del producto
         while True:
             opcion_prod = leer_numero_valido(
-                f"Seleccione producto (1-{len(productos)}): ",
+                f"\n Seleccione producto (1-{len(productos)}): ",
                 tipo=int,
                 minimo=1
             )
             if opcion_prod <= len(productos):
                 producto_elegido = productos[opcion_prod - 1]
                 break
-            print(f"[ERROR] Opción inválida. Ingrese un número entre 1 y {len(productos)}.")
+            print(f"\n [ERROR] Opción inválida. Ingrese un número entre 1 y {len(productos)}.")
 
         cantidad = leer_numero_valido(
-            f"Ingrese cantidad de '{producto_elegido['nombre']}': ",
+            f"\n Ingrese cantidad de '{producto_elegido['nombre']}': ",
             tipo=int,
             minimo=1
         )
@@ -137,29 +139,33 @@ def registrar_pedido(pedidos_dia, contador_pedidos):
 def generar_ticket(pedidos_dia):
     """Muestra el detalle del último pedido cobrado."""
     if not pedidos_dia:
-        print("[INFO] Aún no se han registrado pedidos en la jornada.")
+        print("\n [INFO] Aún no se han registrado pedidos en la jornada.")
         return
 
     ultimo_pedido = pedidos_dia[-1]
 
+    print("\n -------------------------------------------")
     print(f"Código de Pedido: {ultimo_pedido['codigo']}")
     for prod in ultimo_pedido["productos"]:
-        print(f"{prod['cantidad']}x {prod['nombre']} @ ${prod['precio_unitario']:.2f} c/u = ${prod['monto']:.2f}")
+        print(f"{prod['cantidad']}x {prod['nombre']}  ${prod['precio_unitario']:.2f} c/u = ${prod['monto']:.2f}")
     print(f"Subtotal: ${ultimo_pedido['subtotal']:.2f}")
     if ultimo_pedido["recibio_descuento"]:
         print(f"Descuento (10%):-${ultimo_pedido['descuento']:.2f}")
     print(f"TOTAL FINAL: ${ultimo_pedido['total']:.2f}")
     print(f"Medio de Pago: {ultimo_pedido['medio_pago']}")
+    print("\n -------------------------------------------")
 
 def generar_reporte(pedidos_dia, nombre_archivo="reporte.json"):
     """Muestra el reporte de fin de jornada y guarda los datos en un JSON."""
     total_ingresos = sum(p["total"] for p in pedidos_dia)
     clientes_descuento = sum(1 for p in pedidos_dia if p["recibio_descuento"])
 
-    print("REPORTE DE CIERRE DEL DÍA")
+    print("\n -------------------------------------------")
+    print("\n REPORTE DE CIERRE DEL DÍA")
     print(f"Total de ingresos de la cafetería: ${total_ingresos:.2f}")
     print(f"Cantidad total de clientes: {len(pedidos_dia)}")
     print(f"Clientes que tuvieron descuento: {clientes_descuento}")
+    print("\n -------------------------------------------")
 
     datos_exportar = {
         "total_ingresos": total_ingresos,
@@ -189,7 +195,7 @@ def main():
         print("2. Generar ticket de la última venta")
         print("0. Finalizar jornada y generar reporte")
 
-        opcion = input("Seleccione una opción: ").strip().upper()
+        opcion = input("\n Seleccione una opción: ").strip().upper()
 
         match opcion:
             case "1":
@@ -198,7 +204,7 @@ def main():
                 generar_ticket(pedidos_dia)
             case "0":
                 generar_reporte(pedidos_dia)
-                print("Sistema finalizado.")
+                print("\n Sistema finalizado.")
                 break
             case _:
                 print("[ERROR] Opción inválida. Intente de nuevo.")

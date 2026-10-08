@@ -1,0 +1,297 @@
+Proceso SistemaCafeteria
+	
+    Definir pin, entrada, opcion, medioPago Como Cadena
+    Definir codigo Como Cadena
+    Definir nombres, nombreDetalle, pagos Como Cadena
+    Definir codigos Como Cadena
+    Definir precios, precioDetalle, montoDetalle Como Real
+    Definir subtotales, descuentos, totales Como Real
+    Definir subtotal, descuento, totalFinal Como Real
+    Definir totalIngresos Como Real
+    Definir intento, restantes, contador Como Entero
+    Definir i, j, opcionProd, cantidad Como Entero
+    Definir cantTipos, cantDetalle, clientesDescuento Como Entero
+    Definir cantidades, cantidadDetalles Como Entero
+    Definir autenticado, valido Como Logico
+	
+    Dimension nombres[4]
+    Dimension precios[4]
+    Dimension codigos[100]
+    Dimension pagos[100]
+    Dimension subtotales[100]
+    Dimension descuentos[100]
+    Dimension totales[100]
+    Dimension cantDetalle[100]
+    Dimension nombreDetalle[100,100]
+    Dimension precioDetalle[100,100]
+    Dimension cantidadDetalles[100,100]
+    Dimension montoDetalle[100,100]
+	
+    nombres[1] <- "Cafe"
+    nombres[2] <- "Factura"
+    nombres[3] <- "Exprimido"
+    nombres[4] <- "Licuado"
+	
+    precios[1] <- 8000
+    precios[2] <- 6000
+    precios[3] <- 10000
+    precios[4] <- 20000
+	
+    contador <- 0
+    autenticado <- Falso
+	
+    // MODULO 1: AUTENTICACION
+	
+    Para intento <- 1 Hasta 3 Hacer
+		
+        Si NO autenticado Entonces
+			
+            Escribir "Ingrese PIN. Intento ", intento, " de 3:"
+            Leer pin
+			
+            Si pin = "2026" Entonces
+                autenticado <- Verdadero
+                Escribir "Ingreso correcto"
+            SiNo
+                restantes <- 3 - intento
+				
+                Si restantes > 0 Entonces
+                    Escribir "PIN incorrecto."
+                    Escribir "Intentos restantes: ", restantes
+                FinSi
+            FinSi
+			
+        FinSi
+		
+    FinPara
+	
+    Si NO autenticado Entonces
+		
+        Escribir "Sistema bloqueado."
+		
+    SiNo
+		
+        // MENU PRINCIPAL
+		
+        Repetir
+			
+            Escribir ""
+            Escribir "===== CAFETERIA ====="
+            Escribir "1. Registrar nuevo pedido"
+            Escribir "2. Generar ticket"
+            Escribir "0. Finalizar jornada"
+            Leer opcion
+			
+            Segun opcion Hacer
+				
+                "1":
+					
+                    Si contador < 100 Entonces
+						
+                        contador <- contador + 1
+                        codigo <- "P-" + ConvertirATexto(contador)
+                        codigos[contador] <- codigo
+						
+                        Escribir "Pedido: ", codigo
+						
+                        // CANTIDAD DE TIPOS DE PRODUCTOS
+						
+                        Repetir
+                            Escribir "Cantidad de tipos de productos:"
+                            Leer entrada
+							
+                            valido <- Falso
+							
+                            Si entrada <> "" Entonces
+                                cantTipos <- ConvertirANumero(entrada)
+								
+                                Si cantTipos >= 1 Y cantTipos <= 100 Entonces
+                                    Si cantTipos = Trunc(cantTipos) Entonces
+                                        valido <- Verdadero
+                                    FinSi
+                                FinSi
+                            FinSi
+							
+                            Si NO valido Entonces
+                                Escribir "Ingrese un entero entre 1 y 100."
+                            FinSi
+							
+                        Hasta Que valido
+						
+                        subtotal <- 0
+                        cantDetalle[contador] <- cantTipos
+						
+                        Para i <- 1 Hasta cantTipos Hacer
+							
+                            Escribir ""
+                            Escribir "Producto ", i, " de ", cantTipos
+							
+                            Para j <- 1 Hasta 4 Hacer
+                                Escribir j, ". ", nombres[j], " $", precios[j]
+                            FinPara
+							
+                            // SELECCION DE PRODUCTO
+							
+                            Repetir
+                                Escribir "Seleccione producto (1-4):"
+                                Leer entrada
+								
+                                valido <- Falso
+								
+                                Si entrada <> "" Entonces
+                                    opcionProd <- ConvertirANumero(entrada)
+									
+                                    Si opcionProd >= 1 Y opcionProd <= 4 Entonces
+                                        Si opcionProd = Trunc(opcionProd) Entonces
+                                            valido <- Verdadero
+                                        FinSi
+                                    FinSi
+                                FinSi
+								
+                                Si NO valido Entonces
+                                    Escribir "Opcion invalida."
+                                FinSi
+								
+                            Hasta Que valido
+							
+                            // CANTIDAD
+							
+                            Repetir
+                                Escribir "Cantidad de ", nombres[opcionProd], ":"
+                                Leer entrada
+								
+                                valido <- Falso
+								
+                                Si entrada <> "" Entonces
+                                    cantidad <- ConvertirANumero(entrada)
+									
+                                    Si cantidad >= 1 Entonces
+                                        Si cantidad = Trunc(cantidad) Entonces
+                                            valido <- Verdadero
+                                        FinSi
+                                    FinSi
+                                FinSi
+								
+                                Si NO valido Entonces
+                                    Escribir "Ingrese una cantidad entera positiva."
+                                FinSi
+								
+                            Hasta Que valido
+							
+                            nombreDetalle[contador,i] <- Mayusculas(nombres[opcionProd])
+                            precioDetalle[contador,i] <- precios[opcionProd]
+                            cantidadDetalles[contador,i] <- cantidad
+							
+                            montoDetalle[contador,i] <- precios[opcionProd] * cantidad
+							
+                            subtotal <- subtotal + montoDetalle[contador,i]
+							
+                        FinPara
+						
+                        // DESCUENTO
+						
+                        descuento <- 0
+						
+                        Si subtotal > 25000 Entonces
+                            descuento <- subtotal * 0.10
+                        FinSi
+						
+                        totalFinal <- subtotal - descuento
+						
+                        // MEDIO DE PAGO
+						
+                        Escribir "Seleccione medio de pago:"
+                        Escribir "1. Efectivo"
+                        Escribir "2. Tarjeta"
+                        Escribir "3. Transferencia"
+                        Leer opcion
+						
+                        Segun opcion Hacer
+                            "1":
+                                medioPago <- "Efectivo"
+                            "2":
+                                medioPago <- "Tarjeta"
+                            "3":
+                                medioPago <- "Transferencia"
+                            De Otro Modo:
+                                Escribir "Opcion invalida. Se asigna Efectivo."
+                                medioPago <- "Efectivo"
+                        FinSegun
+						
+                        subtotales[contador] <- subtotal
+                        descuentos[contador] <- descuento
+                        totales[contador] <- totalFinal
+                        pagos[contador] <- medioPago
+						
+                        Escribir "Pedido registrado correctamente."
+                        Escribir "Total a pagar: $", totalFinal
+						
+                    SiNo
+                        Escribir "Se alcanzo el limite de pedidos."
+                    FinSi
+					
+                "2":
+					
+                    // MODULO 3: TICKET
+					
+                    Si contador = 0 Entonces
+                        Escribir "No hay pedidos registrados."
+                    SiNo
+						
+                        Escribir ""
+                        Escribir "===== TICKET ====="
+                        Escribir "Pedido: ", codigos[contador]
+						
+                        Para i <- 1 Hasta cantDetalle[contador] Hacer
+							
+                            Escribir cantidadDetalles[contador,i], " x ", nombreDetalle[contador,i]
+                            Escribir "Precio unitario: $", precioDetalle[contador,i]
+                            Escribir "Monto: $", montoDetalle[contador,i]
+							
+                        FinPara
+						
+                        Escribir "Subtotal: $", subtotales[contador]
+						
+                        Si descuentos[contador] > 0 Entonces
+                            Escribir "Descuento 10%: $", descuentos[contador]
+                        FinSi
+						
+                        Escribir "TOTAL: $", totales[contador]
+                        Escribir "Medio de pago: ", pagos[contador]
+						
+                    FinSi
+					
+                "0":
+					
+                    // MODULO 4: REPORTE FINAL
+					
+                    totalIngresos <- 0
+                    clientesDescuento <- 0
+					
+                    Para i <- 1 Hasta contador Hacer
+						
+                        totalIngresos <- totalIngresos + totales[i]
+						
+                        Si descuentos[i] > 0 Entonces
+                            clientesDescuento <- clientesDescuento + 1
+                        FinSi
+						
+                    FinPara
+					
+                    Escribir ""
+                    Escribir "===== CIERRE DEL DIA ====="
+                    Escribir "Total ingresos: $", totalIngresos
+                    Escribir "Total clientes: ", contador
+                    Escribir "Clientes con descuento: ", clientesDescuento
+                    Escribir "Sistema finalizado."
+					
+                De Otro Modo:
+                    Escribir "Opcion invalida."
+					
+            FinSegun
+			
+        Hasta Que opcion = "0"
+		
+    FinSi
+	
+FinProceso

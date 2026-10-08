@@ -1,10 +1,32 @@
 {
-    "total_ingresos": 8000.0,
-    "total_clientes": 1,
-    "clientes_con_descuento": 0,
+    "total_ingresos": 51200.0,
+    "total_clientes": 2,
+    "clientes_con_descuento": 1,
     "historial_pedidos": [
         {
             "codigo": "P-001",
+            "productos": [
+                {
+                    "nombre": "LICUADO",
+                    "precio_unitario": 20000.0,
+                    "cantidad": 2,
+                    "monto": 40000.0
+                },
+                {
+                    "nombre": "CAFÉ",
+                    "precio_unitario": 8000.0,
+                    "cantidad": 1,
+                    "monto": 8000.0
+                }
+            ],
+            "subtotal": 48000.0,
+            "descuento": 4800.0,
+            "recibio_descuento": true,
+            "total": 43200.0,
+            "medio_pago": "Efectivo"
+        },
+        {
+            "codigo": "P-002",
             "productos": [
                 {
                     "nombre": "CAFÉ",
@@ -17,7 +39,7 @@
             "descuento": 0.0,
             "recibio_descuento": false,
             "total": 8000.0,
-            "medio_pago": "Efectivo"
+            "medio_pago": "Tarjeta"
         }
     ]
 }
